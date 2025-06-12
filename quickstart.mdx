@@ -1,97 +1,109 @@
 ---
-title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+title: 'Configuração Inicial'
+description: 'Comece a configurar sua stack para desenvolver com o PediuAí'
 ---
 
-## Setup your development
+## Prepare seu ambiente de desenvolvimento
 
-Learn how to update your docs locally and deploy them to the public.
+Antes de tudo, é importante garantir que você tenha as ferramentas corretas instaladas para trabalhar com a stack do PediuAí:
 
-### Edit and preview
+- .NET 8  
+- Entity Framework Core  
+- SQL Server  
+- SignalR  
+- WhatsApp Business API  
+- Azure (para hospedagem)  
+- Docker
+
+### Etapas iniciais
 
 <AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
+  <Accordion icon="laptop-code" title="Clonar o projeto">
+    O repositório principal do PediuAí está hospedado no GitLab:
+    
+    ```bash
+    git clone https://gitlab.com/sua-org/api-pediuai.git
+    cd api-pediuai
+    ```
+
+    Certifique-se de ter o [Git](https://git-scm.com/downloads) instalado.
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 
-    1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `docs.json` is): ``` mintlify dev ```
-    <Note>
-      If you’re currently using the legacy ```mint.json``` configuration file, please update the Mintlify CLI:
 
+  <Accordion icon="cogs" title="Rodar o backend com Docker">
+    Para subir o ambiente local com o Docker (incluindo .NET, SQL Server e dependências):
+    
+    ```bash
+    docker-compose up --build
+    ```
 
-      ```npm i -g mintlify@latest```
-      And run the new upgrade command in your docs repository:
+    O `docker-compose.yml` já inclui suporte para banco, backend e SignalR.
+  </Accordion>
 
-      ```mintlify upgrade```
-      You should now be using the new ```docs.json``` configuration file. Feel free to delete the ```mint.json``` file from your repository.
-    </Note>
+  <Accordion icon="network-wired" title="Configurar variáveis de ambiente">
+    Copie o arquivo de exemplo `.env.example` e edite suas configurações:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Preencha as variáveis relacionadas ao banco de dados, Azure e WhatsApp Business API.
+  </Accordion>
+
+  <Accordion icon="database" title="Aplicar migrations do Entity Framework">
+    Após o banco estar de pé, aplique as migrations:
+
+    ```bash
+    dotnet ef database update
+    ```
+
+    Instale o EF CLI, se necessário:
+
+    ```bash
+    dotnet tool install --global dotnet-ef
+    ```
   </Accordion>
 </AccordionGroup>
 
-### Deploy your changes
+### Deploy em produção
 
 <AccordionGroup>
+  <Accordion icon="cloud" title="Publicar no Azure via GitLab CI/CD">
+    Use o GitLab CI/CD para automatizar o deploy no Azure:
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+    - Configure variáveis no GitLab (`AZURE_WEBAPP_NAME`, `AZURE_CREDENTIALS`, etc).
+    - No repositório `api-pediuai`, adicione um arquivo `.gitlab-ci.yml` com os steps para build e deploy.
+    - Utilize `az login` via Service Principal no pipeline para autenticar com o Azure.
+  </Accordion>
 
+  <Accordion icon="whatsapp" title="Configurar WhatsApp Business API">
+    Integre a API oficial do WhatsApp:
+
+    - Tenha uma conta verificada no [Facebook Business Manager](https://business.facebook.com/).
+    - Configure o Webhook no Meta.
+    - Use o token no campo `WHATSAPP_API_TOKEN` do `.env`.
+
+    Documentação oficial: [developers.facebook.com/docs/whatsapp](https://developers.facebook.com/docs/whatsapp)
+  </Accordion>
 </AccordionGroup>
 
-## Update your docs
+## Edite e expanda a documentação
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+Documente os processos da sua stack com MDX e componentes React.
 
 <CardGroup>
+  <Card title="Adicionar Conteúdo com MDX" icon="file" href="/essentials/markdown">
+    Use MDX para escrever guias técnicos e páginas de ajuda.
+  </Card>
 
-<Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-  Add content to your docs with MDX syntax.
-</Card>
+  <Card title="Blocos de Código" icon="square-code" href="/essentials/code">
+    Mostre exemplos de uso da API com destaque de sintaxe.
+  </Card>
 
-<Card
-  title="Add Code Blocks"
-  icon="square-code"
-  href="/essentials/code"
->
-  Add code directly to your docs with syntax highlighting.
-</Card>
+  <Card title="Imagens e Logos" icon="image" href="/essentials/images">
+    Ilustre seus tutoriais com imagens e gráficos.
+  </Card>
 
-<Card
-  title="Add Images"
-  icon="image"
-  href="/essentials/images"
->
-  Add images to your docs to make them more engaging.
-</Card>
-
-<Card
-  title="Add Custom Components"
-  icon="puzzle-piece"
-  href="/essentials/reusable-snippets"
->
-  Add templates to your docs to make them more reusable.
-</Card>
-
+  <Card title="Componentes Personalizados" icon="puzzle-piece" href="/essentials/reusable-snippets">
+    Use snippets reutilizáveis para criar seções interativas.
+  </Card>
 </CardGroup>

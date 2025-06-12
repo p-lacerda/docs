@@ -1,107 +1,103 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: 'Ambiente de Desenvolvimento'
+description: 'Faça o setup do desenvolvimento'
 ---
 
-<Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding. <br />
-  Please upgrade to ```docs.json``` before proceeding and delete the legacy ```mint.json``` file.
-</Info>
+Este guia mostra como configurar seu ambiente local para desenvolvimento do **PediuAí**, usando nossa stack principal:
 
-Follow these steps to install and run Mintlify on your operating system:
+- .NET 8  
+- Entity Framework Core  
+- SQL Server  
+- SignalR  
+- WhatsApp Business API  
+- Azure (hospedagem)  
+- Docker  
+- GitLab (CI/CD)
 
-**Step 1**: Install Mintlify:
+---
 
-<CodeGroup>
+## Pré-requisitos
 
-  ```bash npm
-  npm i -g mintlify
-  ```
+Antes de iniciar, certifique-se de ter o seguinte instalado:
 
-```bash yarn
-yarn global add mintlify
-```
+- Node.js (v19 ou superior)
+- Docker e Docker Compose
+- .NET SDK 8
+- Git
+- Ferramentas de sua IDE (como VSCode ou Rider)
 
-</CodeGroup>
+---
 
-**Step 2**: Navigate to the docs directory (where the `docs.json` file is located) and execute the following command:
+## Passo 1: Clonar o projeto
 
-```bash
-mintlify dev
-```
-
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
+Clone o repositório principal hospedado no GitLab:
 
 ```bash
-mintlify dev --port 3333
+git clone https://gitlab.com/sua-org/api-pediuai.git
+cd api-pediuai
 ```
 
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
+---
 
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
+## Passo 2: Configurar variáveis de ambiente
 
-## Mintlify Versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
-
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify@latest
-```
-
-```bash yarn
-yarn global upgrade mintlify
-```
-
-</CodeGroup>
-
-## Validating Links
-
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
+Copie o arquivo de exemplo `.env.example` para `.env` e edite os valores:
 
 ```bash
-mintlify broken-links
+cp .env.example .env
 ```
 
-## Deployment
+Inclua suas configurações de banco de dados, tokens de API do WhatsApp e chaves de integração com o Azure.
 
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
+---
 
-If the deployment is successful, you should see the following:
+## Passo 3: Subir ambiente com Docker
 
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
+Execute o comando abaixo para iniciar o ambiente completo (API + SQL Server + dependências):
 
-## Code Formatting
+```bash
+docker-compose up --build
+```
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
+---
 
-## Troubleshooting
+## Passo 4: Aplicar Migrations
 
-<AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
+Após o ambiente estar rodando, aplique as migrations com Entity Framework:
 
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
-  </Accordion>
+```bash
+dotnet ef database update
+```
 
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
-  </Accordion>
-</AccordionGroup>
+Se necessário, instale o EF CLI:
 
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+---
+
+## Passo 5: Acessar o sistema
+
+Com tudo rodando, acesse o sistema localmente:
+
+```
+http://localhost:5000
+```
+
+ou conforme definido no seu `docker-compose.yml`.
+
+---
+
+## Dicas de desenvolvimento
+
+- Use o SignalR para comunicação em tempo real com o painel e interfaces do cliente.
+- Utilize tokens e webhooks da API do WhatsApp Business para integrar comunicação automatizada.
+- Configure seu CI/CD com GitLab para deploy contínuo no Azure.
+
+---
+
+## Suporte
+
+Para dúvidas técnicas ou suporte interno, consulte o time no Slack ou abra uma issue no GitLab.
+
